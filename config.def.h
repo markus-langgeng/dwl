@@ -117,10 +117,10 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define MODKEY WLR_MODIFIER_ALT
 
 #define TAGKEYS(KEY,SKEY,TAG) \
-	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_CTRL,  KEY,            toggleview,      {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_SHIFT, SKEY,           tag,             {.ui = 1 << TAG} }, \
-	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,SKEY,toggletag, {.ui = 1 << TAG} }
+	{ MODKEY,                    -1, KEY,            view,            {.ui = 1 << TAG} }, \
+	{ MODKEY|WLR_MODIFIER_CTRL,  -1, KEY,            toggleview,      {.ui = 1 << TAG} }, \
+	{ MODKEY|WLR_MODIFIER_SHIFT, -1, SKEY,           tag,             {.ui = 1 << TAG} }, \
+	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,-1,SKEY,toggletag,  {.ui = 1 << TAG} }
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -128,57 +128,78 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* commands */
 static const char *termcmd[] = {"footclient", NULL};
 static const char *menucmd[] = {"footclient", "-T", "floatterm", "-w", "700x200", "frun", NULL};
-/* static const char *openbm[]  = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", NULL}; */
-/* static const char *openbmf[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-f", NULL}; */
-/* static const char *openbmk[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-k", NULL}; */
-/* static const char *shotful[] = {"wshot", NULL}; */
-/* static const char *shotsel[] = {"wshot", "-s", NULL}; */
-/* static const char *castful[] = {"wcast", NULL}; */
-/* static const char *castsel[] = {"wcast", "-s", NULL}; */
-/* static const char *volincr[] = {"wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%+", NULL}; */
-/* static const char *voldecr[] = {"wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "2%-", NULL}; */
-/* static const char *volmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle", NULL}; */
-/* static const char *micmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle", NULL}; */
-/* static const char *musprev[] = {"notif-mpc", "prev", NULL}; */
-/* static const char *musnext[] = {"notif-mpc", "next", NULL}; */
-/* static const char *mustggl[] = {"notif-mpc", "toggle", NULL}; */
-/* static const char *mussngl[] = {"notif-mpc", "single", NULL}; */
-/* static const char *musrept[] = {"notif-mpc", "repeat", NULL}; */
-/* static const char *musrand[] = {"notif-mpc", "random", NULL}; */
-/* static const char *musincv[] = {"mpc", "volume", "+5", NULL}; */
-/* static const char *musdecv[] = {"mpc", "volume", "-5", NULL}; */
-/* static const char *musstat[] = {"notif-mpc", NULL}; */
-/* static const char *ntfwifi[] = {"notif-wifi-blth", "wlan", NULL}; */
-/* static const char *ntfblth[] = {"notif-wifi-blth", "bluetooth", NULL}; */
+static const char *openbm[]  = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", NULL};
+static const char *openbmf[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-f", NULL};
+static const char *openbmk[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-k", NULL};
+static const char *shotful[] = {"wshot", NULL};
+static const char *shotsel[] = {"wshot", "-s", NULL};
+static const char *castful[] = {"wcast", NULL};
+static const char *castsel[] = {"wcast", "-s", NULL};
+static const char *volincr[] = {"wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%+", NULL};
+static const char *voldecr[] = {"wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "2%-", NULL};
+static const char *volmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle", NULL};
+static const char *micmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle", NULL};
+static const char *musprev[] = {"notif-mpc", "prev", NULL};
+static const char *musnext[] = {"notif-mpc", "next", NULL};
+static const char *mustggl[] = {"notif-mpc", "toggle", NULL};
+static const char *mussngl[] = {"notif-mpc", "single", NULL};
+static const char *musrept[] = {"notif-mpc", "repeat", NULL};
+static const char *musrand[] = {"notif-mpc", "random", NULL};
+static const char *musincv[] = {"mpc", "volume", "+5", NULL};
+static const char *musdecv[] = {"mpc", "volume", "-5", NULL};
+static const char *musstat[] = {"notif-mpc", NULL};
+static const char *ntfwifi[] = {"notif-wifi-blth", "wlan", NULL};
+static const char *ntfblth[] = {"notif-wifi-blth", "bluetooth", NULL};
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
-	/* modifier                  key                 function        argument */
-	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_r,          regions,        SHCMD("grim -g \"$(slurp)\"") },
-	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
-	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
-	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
-	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
-	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
-	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
-	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
-	{ MODKEY, 		     XKB_KEY_apostrophe, toggledimming,  {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
-	{ MODKEY,                    XKB_KEY_e,          togglefullscreen, {0} },
-	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
-	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+	/* modifier                      chain, key                          function        argument */
+	{ MODKEY,                           -1, XKB_KEY_p,                    spawn,          {.v = menucmd} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Return,               spawn,          {.v = termcmd} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          {.v = musprev} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          {.v = musnext} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          {.v = mustggl} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_s,                    spawn,          {.v = mussngl} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_r,                    spawn,          {.v = musrept} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_z,                    spawn,          {.v = musrand} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_m,                    spawn,          {.v = musstat} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_plus,                 spawn,          {.v = musincv} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_minus,                spawn,          {.v = musdecv} },
+    { 0,                                -1, XKB_KEY_XF86AudioRaiseVolume, spawn,          {.v = volincr} },
+    { 0,                                -1, XKB_KEY_XF86AudioLowerVolume, spawn,          {.v = voldecr} },
+    { 0,                                -1, XKB_KEY_XF86AudioMute,        spawn,          {.v = volmute} },
+    { 0,                                -1, XKB_KEY_XF86AudioMicMute,     spawn,          {.v = micmute} },
+    { 0,                                -1, XKB_KEY_XF86WLAN,             spawn,          {.v = ntfwifi} },
+    { 0,                                -1, XKB_KEY_XF86Bluetooth,        spawn,          {.v = ntfblth} },
+    { WLR_MODIFIER_LOGO,                -1, XKB_KEY_Print,                spawn,          {.v = shotful} },
+    { 0,                                -1, XKB_KEY_Print,                regions,        {.v = shotsel} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_f, XKB_KEY_Print,                spawn,          {.v = castful} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_s, XKB_KEY_Print,                regions,        {.v = castsel} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_k,                    spawn,          {.v = openbmk} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_f,                    spawn,          {.v = openbmf} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_b,                    spawn,          {.v = openbm}  },
+	{ MODKEY,                           -1, XKB_KEY_j,                    focusstack,     {.i = +1} },
+	{ MODKEY,                           -1, XKB_KEY_k,                    focusstack,     {.i = -1} },
+	{ MODKEY,                           -1, XKB_KEY_i,                    incnmaster,     {.i = +1} },
+	{ MODKEY,                           -1, XKB_KEY_d,                    incnmaster,     {.i = -1} },
+	{ MODKEY,                           -1, XKB_KEY_h,                    setmfact,       {.f = -0.05f} },
+	{ MODKEY,                           -1, XKB_KEY_l,                    setmfact,       {.f = +0.05f} },
+	{ MODKEY,                           -1, XKB_KEY_Return,               zoom,           {0} },
+	{ MODKEY,                           -1, XKB_KEY_Tab,                  view,           {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_C,                    killclient,     {0} },
+	{ MODKEY,                           -1, XKB_KEY_t,                    setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                           -1, XKB_KEY_f,                    setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                           -1, XKB_KEY_m,                    setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                           -1, XKB_KEY_space,                setlayout,      {0} },
+	{ MODKEY, 		                    -1, XKB_KEY_apostrophe,           toggledimming,  {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_space,                togglefloating, {0} },
+	{ MODKEY,                           -1, XKB_KEY_e,                    togglefullscreen, {0} },
+	{ MODKEY,                           -1, XKB_KEY_0,                    view,           {.ui = ~0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_parenright,           tag,            {.ui = ~0} },
+	{ MODKEY,                           -1, XKB_KEY_comma,                focusmon,       {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                           -1, XKB_KEY_period,               focusmon,       {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_less,                 tagmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_greater,              tagmon,         {.i = WLR_DIRECTION_RIGHT} },
 	TAGKEYS(         XKB_KEY_plus,          XKB_KEY_1,               0),
 	TAGKEYS(         XKB_KEY_bracketleft,   XKB_KEY_2,               1),
 	TAGKEYS(         XKB_KEY_braceleft,     XKB_KEY_3,               2),
@@ -188,14 +209,14 @@ static const Key keys[] = {
 	TAGKEYS(         XKB_KEY_parenright,    XKB_KEY_7,               6),
 	TAGKEYS(         XKB_KEY_braceright,    XKB_KEY_8,               7),
 	TAGKEYS(         XKB_KEY_bracketright,  XKB_KEY_9,               8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Q,                    quit,           {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,-1,XKB_KEY_Terminate_Server, quit, {0} },
 	/* Ctrl-Alt-Fx is used to switch to another VT, if you don't know what a VT is
 	 * do not remove them.
 	 */
-#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
+#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,-1,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
 };
