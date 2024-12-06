@@ -39,7 +39,7 @@ static const Rule rules[] = {
     { "foot",             NULL,                 0,            0,           1,         0,       0,           -1},
     { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1},
     { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1},
-    { "wev",              NULL,                 0,            1,           0,         0,       0,           -1},
+    { "wev",              NULL,                 0,            1,           0,         1,       0,           -1},
 };
 
 /* layout(s) */
@@ -159,12 +159,16 @@ static const char *musstat[] = {"notif-mpc", NULL};
 static const char *ntfwifi[] = {"notif-wifi-blth", "wlan", NULL};
 static const char *ntfblth[] = {"notif-wifi-blth", "bluetooth", NULL};
 
+#include "shiftview.c"
+
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                      chain, key                          function        argument */
 	{ MODKEY,                           -1, XKB_KEY_p,                    spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Return,               spawn,          {.v = termcmd} },
 	{ MODKEY,                           -1, XKB_KEY_b,                    togglebar,      {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_less,                 shiftview,      { .i = -1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_greater,              shiftview,      { .i = 1 } },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          {.v = musprev} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          {.v = musnext} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          {.v = mustggl} },
