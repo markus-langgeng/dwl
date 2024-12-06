@@ -21,8 +21,6 @@ static uint32_t colors[][3]                = {
 	[SchemeUrg]  = { 0,          0,          0x770000ff },
 };
 
-static const unsigned int swipe_min_threshold = 0;
-
 /* tagging - TAGCOUNT must be no greater than 31 */
 static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -167,8 +165,8 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_p,                    spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Return,               spawn,          {.v = termcmd} },
 	{ MODKEY,                           -1, XKB_KEY_b,                    togglebar,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_less,                 shiftview,      { .i = -1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_greater,              shiftview,      { .i = 1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_less,                 shiftview,      { .i = -1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_greater,              shiftview,      { .i = 1 } },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          {.v = musprev} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          {.v = musnext} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          {.v = mustggl} },
@@ -259,11 +257,4 @@ static const Button buttons[] = {
 	{ ClkTagBar,   MODKEY, BTN_LEFT,   tag,            {0} },
 	{ ClkTagBar,   MODKEY, BTN_RIGHT,  toggletag,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, 0, BTN_MIDDLE, toggledimmingclient, {0} },
-};
-
-static const Gesture gestures[] = {
-	// { MODKEY, SWIPE_LEFT, 4, shiftview, { .i = 1 } },
-	// { MODKEY, SWIPE_RIGHT, 4, shiftview, { .i = -1 } },
-	{ MODKEY, SWIPE_UP, 3, focusstack, {.i = 1} },
-	{ MODKEY, SWIPE_DOWN, 3, focusstack, {.i = -1} },
 };
