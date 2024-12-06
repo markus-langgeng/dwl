@@ -6,7 +6,7 @@
 /* appearance */
 static const int sloppyfocus               = 0;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const unsigned int borderpx         = 3;  /* border pixel of windows */
+static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const float rootcolor[]             = COLOR(0x222222ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
@@ -23,11 +23,14 @@ static int log_level = WLR_ERROR;
 
 /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   neverdim      monitor */
+	/* app_id     title                       tags mask     isfloating   neverdim      monitor */
 	/* examples: */
-	{ "Gimp_EXAMPLE",     NULL,       0,            1,      0,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox",          NULL,       1 << 2,       0,      0,           -1 }, /* Start on ONLY tag "9" */
-	{ "librewolf",        NULL,       1 << 2,       0,      0,           -1 }, /* Start on ONLY tag "9" */
+	{ "Gimp_EXAMPLE",     NULL,                 0,            1,           0,           -1 }, /* Start on currently visible tags floating, not tiled */
+	{ "firefox",          NULL,                 1 << 2,       0,           0,           -1 }, /* Start on ONLY tag "9" */
+	{ "librewolf",        NULL,                 1 << 2,       0,           0,           -1 }, /* Start on ONLY tag "9" */
+    { NULL,               ".*floatterm.*",      0,            1,           0,           -1},
+    { NULL,               "Picture-in-Picture", 0,            1,           0,           -1},
+    { "wev",              NULL,                 0,            1,           0,           -1},
 };
 
 /* layout(s) */
