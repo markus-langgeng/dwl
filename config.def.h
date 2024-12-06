@@ -4,9 +4,9 @@
                         ((hex >> 8) & 0xFF) / 255.0f, \
                         (hex & 0xFF) / 255.0f }
 /* appearance */
-static const int sloppyfocus               = 1;  /* focus follows mouse */
+static const int sloppyfocus               = 0;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int borderpx         = 3;  /* border pixel of windows */
 static const float rootcolor[]             = COLOR(0x222222ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
@@ -25,7 +25,8 @@ static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
 	/* examples: */
 	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1 }, /* Start on ONLY tag "9" */
+	{ "firefox",          NULL,       1 << 2,       0,           -1 }, /* Start on ONLY tag "9" */
+	{ "librewolf",        NULL,       1 << 2,       0,           -1 }, /* Start on ONLY tag "9" */
 };
 
 /* layout(s) */
@@ -45,7 +46,7 @@ static const Layout layouts[] = {
 static const MonitorRule monrules[] = {
 	/* name       mfact  nmaster scale layout       rotate/reflect                x    y */
 	/* example of a HiDPI laptop monitor:
-	{ "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ "eDP-1",    0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	*/
 	/* defaults */
 	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
@@ -54,6 +55,7 @@ static const MonitorRule monrules[] = {
 /* keyboard */
 static const struct xkb_rule_names xkb_rules = {
 	/* can specify fields: rules, model, layout, variant, options */
+    .layout = "real-prog-dvorak",
 	/* example:
 	.options = "ctrl:nocaps",
 	*/
@@ -67,7 +69,7 @@ static const int repeat_delay = 600;
 static const int tap_to_click = 1;
 static const int tap_and_drag = 1;
 static const int drag_lock = 1;
-static const int natural_scrolling = 0;
+static const int natural_scrolling = 1;
 static const int disable_while_typing = 1;
 static const int left_handed = 0;
 static const int middle_button_emulation = 0;
@@ -119,8 +121,30 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
-static const char *menucmd[] = { "wmenu-run", NULL };
+static const char *termcmd[] = {"footclient", NULL};
+static const char *menucmd[] = {"footclient", "-T", "floatterm", "-w", "700x200", "frun", NULL};
+/* static const char *openbm[]  = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", NULL}; */
+/* static const char *openbmf[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-f", NULL}; */
+/* static const char *openbmk[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-k", NULL}; */
+/* static const char *shotful[] = {"wshot", NULL}; */
+/* static const char *shotsel[] = {"wshot", "-s", NULL}; */
+/* static const char *castful[] = {"wcast", NULL}; */
+/* static const char *castsel[] = {"wcast", "-s", NULL}; */
+/* static const char *volincr[] = {"wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%+", NULL}; */
+/* static const char *voldecr[] = {"wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "2%-", NULL}; */
+/* static const char *volmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle", NULL}; */
+/* static const char *micmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle", NULL}; */
+/* static const char *musprev[] = {"notif-mpc", "prev", NULL}; */
+/* static const char *musnext[] = {"notif-mpc", "next", NULL}; */
+/* static const char *mustggl[] = {"notif-mpc", "toggle", NULL}; */
+/* static const char *mussngl[] = {"notif-mpc", "single", NULL}; */
+/* static const char *musrept[] = {"notif-mpc", "repeat", NULL}; */
+/* static const char *musrand[] = {"notif-mpc", "random", NULL}; */
+/* static const char *musincv[] = {"mpc", "volume", "+5", NULL}; */
+/* static const char *musdecv[] = {"mpc", "volume", "-5", NULL}; */
+/* static const char *musstat[] = {"notif-mpc", NULL}; */
+/* static const char *ntfwifi[] = {"notif-wifi-blth", "wlan", NULL}; */
+/* static const char *ntfblth[] = {"notif-wifi-blth", "bluetooth", NULL}; */
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
@@ -148,15 +172,15 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_RIGHT} },
-	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
-	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
-	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),
-	TAGKEYS(          XKB_KEY_4, XKB_KEY_dollar,                     3),
-	TAGKEYS(          XKB_KEY_5, XKB_KEY_percent,                    4),
-	TAGKEYS(          XKB_KEY_6, XKB_KEY_asciicircum,                5),
-	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                  6),
-	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                   7),
-	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8),
+	TAGKEYS(         XKB_KEY_plus,          XKB_KEY_1,               0),
+	TAGKEYS(         XKB_KEY_bracketleft,   XKB_KEY_2,               1),
+	TAGKEYS(         XKB_KEY_braceleft,     XKB_KEY_3,               2),
+	TAGKEYS(         XKB_KEY_parenleft,     XKB_KEY_4,               3),
+	TAGKEYS(         XKB_KEY_ampersand,     XKB_KEY_5,               4),
+	TAGKEYS(         XKB_KEY_equal,         XKB_KEY_6,               5),
+	TAGKEYS(         XKB_KEY_parenright,    XKB_KEY_7,               6),
+	TAGKEYS(         XKB_KEY_braceright,    XKB_KEY_8,               7),
+	TAGKEYS(         XKB_KEY_bracketright,  XKB_KEY_9,               8),
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
