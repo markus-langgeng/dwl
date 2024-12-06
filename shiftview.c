@@ -4,8 +4,7 @@ void
 shiftview(const Arg *arg)
 {
 	Arg a;
-	Client *c;
-	bool visible = false;
+	bool visible = true;
 	int i = arg->i;
 	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
@@ -15,14 +14,6 @@ shiftview(const Arg *arg)
             nextseltags = (curseltags << i) | (curseltags >> ((int)LENGTH(tags) - i));
         else // right circular shift
 			nextseltags = curseltags >> (-i) | (curseltags << ((int)LENGTH(tags) + i));
-
-        // Check if the tag is visible
-        wl_list_for_each(c, &clients, link) {
-            if (c->mon == selmon && nextseltags & c->tags) {
-                visible = true;
-                break;
-            }
-        }
 
 		i += arg->i;
     } while (!visible && ++count <= (int)LENGTH(tags));
