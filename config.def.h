@@ -34,6 +34,7 @@ static const Rule rules[] = {
 	{ "Gimp_EXAMPLE",     NULL,                 0,            1,           0,         0,       0,           -1 }, /* Start on currently visible tags floating, not tiled */
 	{ "firefox",          NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
 	{ "librewolf",        NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
+    { NULL,     "Wayland Output Mirror.*",      0,            0,           0,         0,       1,           -1},
     { "foot",             NULL,                 0,            0,           1,         0,       0,           -1},
     { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1},
     { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1},
