@@ -329,6 +329,7 @@ static Monitor *dirtomon(enum wlr_direction dir);
 static void drawbar(Monitor *m);
 static void drawbars(void);
 static void focusclient(Client *c, int lift);
+static void focusto(const Arg *arg);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Client *focustop(Monitor *m);
@@ -358,6 +359,7 @@ static void pointerfocus(Client *c, struct wlr_surface *surface,
 		double sx, double sy, uint32_t time);
 static void powermgrsetmode(struct wl_listener *listener, void *data);
 static void quit(const Arg *arg);
+static void relativeswap(const Arg *arg);
 static void rendermon(struct wl_listener *listener, void *data);
 static void requestdecorationmode(struct wl_listener *listener, void *data);
 static void requeststartdrag(struct wl_listener *listener, void *data);
@@ -377,6 +379,8 @@ static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
 static void spawn(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
+static void swapstack(const Arg *arg);
+static void relativeswap(const Arg *arg);
 static int statusin(int fd, unsigned int mask, void *data);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -398,9 +402,11 @@ static void urgent(struct wl_listener *listener, void *data);
 static void view(const Arg *arg);
 static void virtualkeyboard(struct wl_listener *listener, void *data);
 static void virtualpointer(struct wl_listener *listener, void *data);
+static Client *nextvisible(int i, struct wl_list *from, Monitor *m);
 static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+static void wl_list_swap(struct wl_list *a, struct wl_list *b);
 static void zoom(const Arg *arg);
 static pid_t getparentprocess(pid_t p);
 static int isdescprocess(pid_t p, pid_t c);
@@ -1702,6 +1708,21 @@ focusclient(Client *c, int lift)
 }
 
 void
+focusto(const Arg *arg)
+{
+	Client *c, *sel = focustop(selmon);
+	int i;
+	if (!sel || (sel->isfullscreen && !client_has_children(sel)))
+		return;
+
+	i = arg->i > -1 ? arg->i + 1 : arg->i;
+
+	c = nextvisible(i, &clients, selmon);
+	if (c)
+		focusclient(c , 1);
+}
+
+void
 focusmon(const Arg *arg)
 {
 	int i = 0, nmons = wl_list_length(&mons);
@@ -2434,6 +2455,24 @@ quit(const Arg *arg)
 }
 
 void
+relativeswap(const Arg *arg)
+{
+	Client *trgt, *sel = focustop(selmon);
+
+	if (!sel || !selmon)
+		return;
+
+	trgt = nextvisible(arg->i, &sel->link, selmon);
+	if (!trgt || trgt == sel)
+		return;
+
+	wl_list_swap(&sel->link, &trgt->link);
+
+	focusclient(sel, 1);
+	arrange(selmon);
+}
+
+void
 rendermon(struct wl_listener *listener, void *data)
 {
 	/* This function is called every time an output is ready to display a frame,
@@ -3025,6 +3064,26 @@ statusin(int fd, unsigned int mask, void *data)
 }
 
 void
+swapstack(const Arg *arg)
+{
+	Client *trgt, *sel = focustop(selmon);
+	int i;
+
+	if (!sel || !selmon)
+		return;
+
+	i = arg->i > -1 ? arg->i + 1 : arg->i;
+	trgt = nextvisible(i, &clients, selmon);
+	if (!trgt || trgt == sel)
+		return;
+
+	wl_list_swap(&sel->link, &trgt->link);
+
+	focusclient(sel, 1);
+	arrange(selmon);
+}
+
+void
 tag(const Arg *arg)
 {
 	Client *sel = focustop(selmon);
@@ -3426,11 +3485,56 @@ virtualpointer(struct wl_listener *listener, void *data)
 		wlr_cursor_map_input_to_output(cursor, device, event->suggested_output);
 }
 
+Client *
+nextvisible(int i, struct wl_list *from, Monitor *m)
+{
+	Client *c;
+	if (i >= 0){
+		wl_list_for_each(c, from, link) {
+			// if (VISIBLEON(c , m) && &c->link != from && i--)
+			if (VISIBLEON(c , m)) {
+				if (--i == 0)
+					return c;
+			}
+		}
+	} else if (i < 0) {
+		wl_list_for_each_reverse(c, from, link) {
+			if (VISIBLEON(c , m))
+				if (++i == 0)
+					return c;
+		}
+	}
+	return NULL;
+}
+
 Monitor *
 xytomon(double x, double y)
 {
 	struct wlr_output *o = wlr_output_layout_output_at(output_layout, x, y);
 	return o ? o->data : NULL;
+}
+
+void
+wl_list_swap(struct wl_list *a, struct wl_list *b)
+{
+	struct wl_list *prev_a = a->prev;
+	struct wl_list *prev_b = b->prev;
+
+	if (prev_b == a) {
+		wl_list_remove(a);
+		wl_list_insert(b, a);
+		return;
+	}
+	if (prev_a == b) {
+		wl_list_remove(b);
+		wl_list_insert(a, b);
+		return;
+	}
+	wl_list_remove(a);
+	wl_list_insert(prev_b, a);
+
+	wl_list_remove(b);
+	wl_list_insert(prev_a, b);
 }
 
 void
