@@ -38,6 +38,7 @@ static const Rule rules[] = {
 	{ "firefox",          NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
 	{ "librewolf",        NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
     { NULL,     "Wayland Output Mirror.*",      0,            0,           0,         0,       1,           -1 },
+    { "mpv",              NULL,                 0,            0,           0,         0,       1,           -1 },
     { "foot",             NULL,                 0,            0,           1,         0,       0,           -1 },
     { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1 },
     { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1 },
@@ -170,8 +171,8 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_p,                    spawn,          {.v = menucmd} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Return,               spawn,          {.v = termcmd} },
 	{ MODKEY,                           -1, XKB_KEY_b,                    togglebar,      {0} },
-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_less,                 shiftview,      { .i = -1 } },
-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_greater,              shiftview,      { .i = 1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_less,             shiftview,      { .i = -1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_greater,          shiftview,      { .i = 1 } },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          {.v = musprev} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          {.v = musnext} },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          {.v = mustggl} },
@@ -229,6 +230,15 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_period,               focusmon,       {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_less,                 tagmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_greater,              tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_g,                    movetocardinaldir,  {.ui = DIR_NW} }, // u
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_c,                    movetocardinaldir,  {.ui = DIR_N}  }, // i
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_r,                    movetocardinaldir,  {.ui = DIR_NE} }, // o
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_h,                    movetocardinaldir,  {.ui = DIR_W}  }, // j
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_t,                    movetocardinaldir,  {.ui = DIR_C}  }, // k
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_n,                    movetocardinaldir,  {.ui = DIR_E}  }, // l
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_m,                    movetocardinaldir,  {.ui = DIR_SW} }, // m
+	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_w,                    movetocardinaldir,  {.ui = DIR_S}  }, // ,
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_v,                    movetocardinaldir,  {.ui = DIR_SE} }, // .
 	TAGKEYS(         XKB_KEY_plus,          XKB_KEY_1,               0),
 	TAGKEYS(         XKB_KEY_bracketleft,   XKB_KEY_2,               1),
 	TAGKEYS(         XKB_KEY_braceleft,     XKB_KEY_3,               2),

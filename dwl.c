@@ -93,6 +93,7 @@ enum { CurNormal, CurPressed, CurMove, CurResize }; /* cursor */
 enum { XDGShell, LayerShell, X11 }; /* client types */
 enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock, NUM_LAYERS }; /* scene layers */
 enum { ClkTagBar, ClkLtSymbol, ClkStatus, ClkTitle, ClkClient, ClkRoot }; /* clicks */
+enum { DIR_test, DIR_N, DIR_S, DIR_W, DIR_E, DIR_C, DIR_NW, DIR_NE, DIR_SW, DIR_SE}; /* 8 cardinal directions + center*/
 #ifdef XWAYLAND
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
@@ -410,6 +411,7 @@ static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglebar(const Arg *arg);
+static void movetocardinaldir(const Arg *arg);
 static void toggledimming(const Arg *arg);
 static void toggledimmingclient(const Arg *arg);
 static void togglefloating(const Arg *arg);
@@ -600,8 +602,8 @@ applyrules(Client *c)
 		}
 	}
 	if (mon) {
-		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
-		c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;
+		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->w.x;
+		c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->w.y;
 	}
 	if (!c->noswallow && !client_is_float_type(c)
 			&& !c->surface.xdg->initial_commit) {
@@ -2312,8 +2314,8 @@ mapnotify(struct wl_listener *listener, void *data)
 	if ((p = client_get_parent(c))) {
 		c->isfloating = 1;
 		if (p->mon) {
-			c->geom.x = (p->mon->w.width - c->geom.width) / 2 + p->mon->m.x;
-			c->geom.y = (p->mon->w.height - c->geom.height) / 2 + p->mon->m.y;
+			c->geom.x = (p->mon->w.width - c->geom.width) / 2 + p->mon->w.x;
+			c->geom.y = (p->mon->w.height - c->geom.height) / 2 + p->mon->w.y;
 		}
 		setmon(c, p->mon, p->tags);
 	} else {
@@ -3435,6 +3437,69 @@ togglefullscreen(const Arg *arg)
 	Client *sel = focustop(selmon);
 	if (sel)
 		setfullscreen(sel, !sel->isfullscreen);
+}
+
+void
+movetocardinaldir(const Arg *arg)
+{
+    Client *c = focustop(selmon);
+	Monitor *m = selmon;
+    struct wlr_box b;
+    int nx, ny;
+
+	if(!(m && arg && arg->v && c && c->isfloating)) {
+		return;
+	}
+
+    b = c->mon->w; // mon->w means respect monitor reserved area
+
+    switch (arg->ui) {
+        case DIR_NW:
+            nx = b.x;
+            ny = topbar == 1 ? b.y : c->mon->m.y;
+            break;
+        case DIR_N:
+            nx = (b.width - c->geom.width) / 2 + b.x;
+            ny = topbar == 1 ? b.y : c->mon->m.y;
+            break;
+        case DIR_NE:
+            nx = b.width;
+            ny = topbar == 1 ? b.y : c->mon->m.y;
+            break;
+        case DIR_E:
+            nx = b.width;
+            ny = (b.height - c->geom.height) / 2 + b.y;
+            break;
+        case DIR_SW:
+            nx = b.x;
+            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
+            break;
+        case DIR_S:
+            nx = (b.width - c->geom.width) / 2 + b.x;
+            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
+            break;
+        case DIR_SE:
+            nx = b.width;
+            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
+            break;
+        case DIR_W:
+            nx = b.x;
+            ny = (b.height - c->geom.height) / 2 + b.y;
+            break;
+        case DIR_C:
+            nx = (b.width - c->geom.width) / 2 + b.x;
+            ny = (b.height - c->geom.height) / 2 + b.y;
+            break;
+        default:
+            return;
+    }
+
+	resize(c, (struct wlr_box){
+		.x = nx,
+		.y = ny,
+		.width = c->geom.width,
+		.height = c->geom.height,
+	}, 1);
 }
 
 void
