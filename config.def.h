@@ -6,12 +6,15 @@
 /* appearance */
 static const int sloppyfocus               = 0;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
-static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const int smartgaps                 = 0;  /* 1 means no outer gap when there is only one window */
+static int gaps                            = 1;  /* 1 means gaps between windows are added */
+static const unsigned int gappx            = 10; /* gap pixel between windows */
+static const unsigned int borderpx         = 0;  /* border pixel of windows */
 static const int showbar                   = 1; /* 0 means no bar */
 static const int topbar                    = 1; /* 0 means bottom bar */
 static const char *fonts[]                 = {"monospace:size=10"};
 static const float rootcolor[]             = COLOR(0x000000ff);
-static const float unfocuseddim[]            = COLOR(0x00000088);
+static const float unfocuseddim[]            = COLOR(0x0000008c);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You can also use glsl colors */
 static uint32_t colors[][3]                = {
@@ -34,11 +37,11 @@ static const Rule rules[] = {
 	{ "Gimp_EXAMPLE",     NULL,                 0,            1,           0,         0,       0,           -1 }, /* Start on currently visible tags floating, not tiled */
 	{ "firefox",          NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
 	{ "librewolf",        NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
-    { NULL,     "Wayland Output Mirror.*",      0,            0,           0,         0,       1,           -1},
-    { "foot",             NULL,                 0,            0,           1,         0,       0,           -1},
-    { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1},
-    { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1},
-    { "wev",              NULL,                 0,            1,           0,         1,       0,           -1},
+    { NULL,     "Wayland Output Mirror.*",      0,            0,           0,         0,       1,           -1 },
+    { "foot",             NULL,                 0,            0,           1,         0,       0,           -1 },
+    { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1 },
+    { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1 },
+    { "wev",              NULL,                 0,            1,           0,         1,       0,           -1 },
 };
 
 /* layout(s) */
@@ -211,6 +214,7 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_l,                    setmfact,       {.f = +0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_Return,               zoom,           {0} },
 	{ MODKEY,                           -1, XKB_KEY_Tab,                  view,           {0} },
+	{ MODKEY,                           -1, XKB_KEY_g,                    togglegaps,     {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_C,                    killclient,     {0} },
 	{ MODKEY,                           -1, XKB_KEY_t,                    setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                           -1, XKB_KEY_f,                    setlayout,      {.v = &layouts[1]} },
