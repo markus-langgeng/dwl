@@ -858,7 +858,7 @@ buttonpress(struct wl_listener *listener, void *data)
 				if (!(occ & 1 << i || selmon->tagset[selmon->seltags] & 1 << i))
 					continue;
 				x += TEXTW(selmon, tags[i]);
-			} while (cursor->x >= x && ++i < LENGTH(tags));
+			} while (cx >= x && ++i < LENGTH(tags));
 			if (i < LENGTH(tags)) {
 				click = ClkTagBar;
 				arg.ui = 1 << i;
