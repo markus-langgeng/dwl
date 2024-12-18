@@ -140,28 +140,6 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* commands */
 static const char *termcmd[] = {"footclient", NULL};
 static const char *menucmd[] = {"footclient", "-T", "floatterm", "-w", "700x200", "frun", NULL};
-static const char *openbm[]  = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", NULL};
-static const char *openbmf[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-f", NULL};
-static const char *openbmk[] = {"footclient", "-T", "floatterm", "-w", "800x400", "bm-open", "-k", NULL};
-static const char *shotful[] = {"wshot", NULL};
-static const char *shotsel[] = {"wshot", "-s", NULL};
-static const char *castful[] = {"wcast", NULL};
-static const char *castsel[] = {"wcast", "-s", NULL};
-static const char *volincr[] = {"wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%+", NULL};
-static const char *voldecr[] = {"wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "2%-", NULL};
-static const char *volmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle", NULL};
-static const char *micmute[] = {"wpctl", "set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle", NULL};
-static const char *musprev[] = {"notif-mpc", "prev", NULL};
-static const char *musnext[] = {"notif-mpc", "next", NULL};
-static const char *mustggl[] = {"notif-mpc", "toggle", NULL};
-static const char *mussngl[] = {"notif-mpc", "single", NULL};
-static const char *musrept[] = {"notif-mpc", "repeat", NULL};
-static const char *musrand[] = {"notif-mpc", "random", NULL};
-static const char *musincv[] = {"mpc", "volume", "+5", NULL};
-static const char *musdecv[] = {"mpc", "volume", "-5", NULL};
-static const char *musstat[] = {"notif-mpc", NULL};
-static const char *ntfwifi[] = {"notif-wifi-blth", "wlan", NULL};
-static const char *ntfblth[] = {"notif-wifi-blth", "bluetooth", NULL};
 
 #include "shiftview.c"
 
@@ -173,28 +151,26 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_b,                    togglebar,      {0} },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_less,             shiftview,      { .i = -1 } },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_greater,          shiftview,      { .i = 1 } },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          {.v = musprev} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          {.v = musnext} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          {.v = mustggl} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_s,                    spawn,          {.v = mussngl} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_r,                    spawn,          {.v = musrept} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_z,                    spawn,          {.v = musrand} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_m,                    spawn,          {.v = musstat} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_plus,                 spawn,          {.v = musincv} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_minus,                spawn,          {.v = musdecv} },
-    { 0,                                -1, XKB_KEY_XF86AudioRaiseVolume, spawn,          {.v = volincr} },
-    { 0,                                -1, XKB_KEY_XF86AudioLowerVolume, spawn,          {.v = voldecr} },
-    { 0,                                -1, XKB_KEY_XF86AudioMute,        spawn,          {.v = volmute} },
-    { 0,                                -1, XKB_KEY_XF86AudioMicMute,     spawn,          {.v = micmute} },
-    { 0,                                -1, XKB_KEY_XF86WLAN,             spawn,          {.v = ntfwifi} },
-    { 0,                                -1, XKB_KEY_XF86Bluetooth,        spawn,          {.v = ntfblth} },
-    { WLR_MODIFIER_LOGO,                -1, XKB_KEY_Print,                spawn,          {.v = shotful} },
-    { 0,                                -1, XKB_KEY_Print,                regions,        {.v = shotsel} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_f, XKB_KEY_Print,                spawn,          {.v = castful} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_s, XKB_KEY_Print,                regions,        {.v = castsel} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_k,                    spawn,          {.v = openbmk} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_f,                    spawn,          {.v = openbmf} },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_b,                    spawn,          {.v = openbm}  },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          SHCMD("mpc prev; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          SHCMD("mpc next; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          SHCMD("mpc toggle; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_s,                    spawn,          SHCMD("mpc single; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_r,                    spawn,          SHCMD("mpc repeat; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_z,                    spawn,          SHCMD("mpc random; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_m,                    spawn,          SHCMD("songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_plus,                 spawn,          SHCMD("mpc volume +5;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_minus,                spawn,          SHCMD("mpc volume -5;") },
+    { 0,                                -1, XKB_KEY_XF86AudioRaiseVolume, spawn,          SHCMD("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%+;") },
+    { 0,                                -1, XKB_KEY_XF86AudioLowerVolume, spawn,          SHCMD("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%-;") },
+    { 0,                                -1, XKB_KEY_XF86AudioMute,        spawn,          SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle;") },
+    { 0,                                -1, XKB_KEY_XF86AudioMicMute,     spawn,          SHCMD("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle;") },
+    { WLR_MODIFIER_LOGO,                -1, XKB_KEY_Print,                spawn,          SHCMD("wshot") },
+    { 0,                                -1, XKB_KEY_Print,                regions,        SHCMD("wshot -s") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_f, XKB_KEY_Print,                spawn,          SHCMD("wcast") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_s, XKB_KEY_Print,                regions,        SHCMD("wcast -s") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_k,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -k") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_f,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -f") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_b,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open") },
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_h,                    focusto,        {.i = 0}  }, // j (m)
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_t,                    focusto,        {.i = 1}  }, // k
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_n,                    focusto,        {.i = 2}  }, // l
