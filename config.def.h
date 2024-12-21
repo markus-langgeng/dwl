@@ -33,17 +33,18 @@ static int log_level = WLR_ERROR;
 
 /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
 static const Rule rules[] = {
-	/* app_id     title                       tags mask     isfloating   isterm    noswallow neverdim      monitor */
+	/* app_id     title                       tags mask    switchtotag  isfloating  isterm  noswallow neverdim  monitor */
 	/* examples: */
-	{ "Gimp_EXAMPLE",     NULL,                 0,            1,           0,         0,       0,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox",          NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
-	{ "librewolf",        NULL,                 1 << 2,       0,           0,         0,       0,           -1 }, /* Start on ONLY tag "9" */
-    { NULL,     "Wayland Output Mirror.*",      0,            0,           0,         0,       1,           -1 },
-    { "mpv",              NULL,                 0,            0,           0,         0,       1,           -1 },
-    { "foot",             NULL,                 0,            0,           1,         0,       0,           -1 },
-    { NULL,               ".*floatterm.*",      0,            1,           1,         0,       0,           -1 },
-    { NULL,               "Picture-in-Picture", 0,            1,           0,         0,       0,           -1 },
-    { "wev",              NULL,                 0,            1,           0,         1,       0,           -1 },
+	{ "librewolf",        NULL,                 1 << 1,       1,          0,        0,       0,       0,       -1 },
+	{ "org.pwmt.zathura", NULL,                 1 << 2,       1,          0,        0,       0,       0,       -1 },
+	{ "libreoffice-.*",   NULL,                 1 << 3,       1,          0,        0,       0,       0,       -1 },
+	{ "org.kde.kdenlive", NULL,                 1 << 4,       1,          0,        0,       0,       0,       -1 },
+    { NULL,     "Wayland Output Mirror.*",      0,            0,          0,        0,       0,       1,       -1 },
+    { "mpv",              NULL,                 0,            0,          0,        0,       0,       1,       -1 },
+    { "foot",             NULL,                 0,            0,          0,        1,       0,       0,       -1 },
+    { NULL,               ".*floatterm.*",      0,            0,          1,        1,       0,       0,       -1 },
+    { NULL,               "Picture-in-Picture", 0,            0,          1,        0,       0,       0,       -1 },
+    { "wev",              NULL,                 0,            0,          1,        0,       1,       0,       -1 },
 };
 
 /* layout(s) */

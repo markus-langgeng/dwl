@@ -161,7 +161,7 @@ struct Client {
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen, isterm, noswallow, neverdim;
+	int isfloating, isurgent, isfullscreen, isterm, noswallow, neverdim, switchtotag;
 	uint32_t resize; /* configure serial of a pending resize */
 	pid_t pid;
 	Client *swallowing, *swallowedby;
@@ -279,6 +279,7 @@ typedef struct {
 	const char *id;
 	const char *title;
 	uint32_t tags;
+	bool switchtotag;
 	int isfloating;
 	int isterm;
 	int noswallow;
@@ -297,7 +298,7 @@ typedef struct {
 
 /* function declarations */
 static void applybounds(Client *c, struct wlr_box *bbox);
-static void applyrules(Client *c);
+static void applyrules(Client *c, bool map);
 static void arrange(Monitor *m);
 static void arrangelayer(Monitor *m, struct wl_list *list,
 		struct wlr_box *usable_area, int exclusive);
@@ -583,7 +584,7 @@ applybounds(Client *c, struct wlr_box *bbox)
 }
 
 void
-applyrules(Client *c)
+applyrules(Client *c, bool map)
 {
 	/* rule matching */
 	const char *appid, *title;
@@ -617,6 +618,11 @@ applyrules(Client *c)
 			wl_list_for_each(m, &mons, link) {
 				if (r->monitor == i++)
 					mon = m;
+			}
+			if (r->switchtotag && map) {
+				c->switchtotag = selmon->tagset[selmon->seltags];
+				mon->seltags ^= 1;
+				mon->tagset[selmon->seltags] = r->tags & TAGMASK;
 			}
 		}
 	}
@@ -1196,7 +1202,7 @@ commitnotify(struct wl_listener *listener, void *data)
 		 * a different monitor based on its title this will likely select
 		 * a wrong monitor.
 		 */
-		applyrules(c);
+		applyrules(c, false);
 		if (c->mon) {
 			wlr_surface_set_preferred_buffer_scale(client_surface(c), (int)ceilf(c->mon->wlr_output->scale));
 			wlr_fractional_scale_v1_notify_scale(client_surface(c), c->mon->wlr_output->scale);
@@ -2382,7 +2388,7 @@ mapnotify(struct wl_listener *listener, void *data)
 		}
 		setmon(c, p->mon, p->tags);
 	} else {
-		applyrules(c);
+		applyrules(c, true);
 		d = focustop(selmon);
 		if (d) {
 			client_set_dimmer_state(d, 0);
@@ -3839,6 +3845,14 @@ unmapnotify(struct wl_listener *listener, void *data)
 	if (c->foreign_toplevel) {
 		wlr_foreign_toplevel_handle_v1_destroy(c->foreign_toplevel);
 		c->foreign_toplevel = NULL;
+	}
+
+	if (c->switchtotag) {
+		Arg a = { .ui = c->switchtotag };
+		// Call view() -> arrange() -> checkidleinhibitor() before
+		// wlr_scene_node_destroy() to prevent a rare use after free of
+		// tree->node.
+		view(&a);
 	}
 
 	wlr_scene_node_destroy(&c->scene->node);
