@@ -53,6 +53,7 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "[D]",      deck },
 };
 
 /* monitors */
@@ -185,8 +186,6 @@ static const Key keys[] = {
     { MODKEY,                           -1, XKB_KEY_Up,                   focusstack,     {.i = -1} }, // k
     { MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Down,                 relativeswap,   {.i = +1} }, // J
     { MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Up,                   relativeswap,   {.i = -1} }, // K
-	{ MODKEY,                           -1, XKB_KEY_i,                    incnmaster,     {.i = +1} },
-	{ MODKEY,                           -1, XKB_KEY_d,                    incnmaster,     {.i = -1} },
 	{ MODKEY,                           -1, XKB_KEY_h,                    setmfact,       {.f = -0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_l,                    setmfact,       {.f = +0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_Return,               zoom,           {0} },
@@ -196,6 +195,7 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_t,                    setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                           -1, XKB_KEY_f,                    setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                           -1, XKB_KEY_m,                    setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                           -1, XKB_KEY_d,                    setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                           -1, XKB_KEY_space,                setlayout,      {0} },
 	{ MODKEY, 		                    -1, XKB_KEY_apostrophe,           toggledimming,  {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_space,                togglefloating, {0} },
