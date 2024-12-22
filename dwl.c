@@ -2452,13 +2452,18 @@ maximizenotify(struct wl_listener *listener, void *data)
 void
 monocle(Monitor *m)
 {
+	unsigned int e = m->gaps, mw, mh, my, ty;
 	Client *c;
 	int n = 0;
+    mw = m->w.width;
+    mh = m->w.height;
+    my = ty = gappx*e;
 
 	wl_list_for_each(c, &clients, link) {
 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
-		resize(c, m->w, 0);
+		resize(c, (struct wlr_box){.x = m->w.x + gappx*e, .y = m->w.y + my,
+            .width = mw - 2*gappx*e, .height = mh - 2*gappx*e}, 0);
 		n++;
 	}
 	if (n)
