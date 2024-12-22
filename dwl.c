@@ -1613,7 +1613,7 @@ cursorwarptohint(void)
 void
 deck(Monitor *m)
 {
-	unsigned int mw, my;
+	unsigned int h, r, e = m->gaps, mw, my, ty;
 	int i, n = 0;
 	Client *c;
 
@@ -1622,22 +1622,29 @@ deck(Monitor *m)
 			n++;
 	if (n == 0)
 		return;
+	if (smartgaps == n)
+		e = 0;
 
 	if (n > m->nmaster)
-		mw = m->nmaster ? (int)roundf(m->w.width * m->mfact) : 0;
-	else
+		mw = m->nmaster ? (int)roundf((m->w.width + gappx*e) * m->mfact) : 0;
+    else
 		mw = m->w.width;
-	i = my = 0;
+	i = 0;
+    my = ty = gappx*e;
 	wl_list_for_each(c, &clients, link) {
 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
 		if (i < m->nmaster) {
-			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
-				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
-			my += c->geom.height;
+			r = (MIN(n, m->nmaster) - i);
+            h = (m->w.height - my - gappx*e - gappx*e * (r-1)) / r;
+			resize(c, (struct wlr_box){.x = m->w.x + gappx*e, .y = m->w.y + my,
+                .width = mw - 2*gappx*e, .height = h}, 0);
+			my += c->geom.height + gappx*e;
 		} else {
-			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y,
-				.width = m->w.width - mw, .height = m->w.height}, 0);
+            r = n -i;
+			h = m->w.height - ty -  gappx*e - gappx*e * (r - 1);
+			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
+				.width = m->w.width - mw - gappx*e, .height = h}, 0);
 			if (c == focustop(m))
 				wlr_scene_node_raise_to_top(&c->scene->node);
 		}
