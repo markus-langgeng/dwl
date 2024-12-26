@@ -21,7 +21,7 @@ static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You ca
 static uint32_t colors[][3]                = {
 	/*               fg          bg          border    */
 	[SchemeNorm] = { 0xbbbbbbff, 0x203a2fff, 0x444444ff },
-	[SchemeSel]  = { 0xeeeeeeff, 0x005577ff, 0x99d490ff },
+	[SchemeSel]  = { 0xeeeeeeff, 0x4a7d42ff, 0x99d490ff },
 	[SchemeUrg]  = { 0,          0,          0x770000ff },
 };
 
@@ -66,8 +66,8 @@ static const MonitorRule monrules[] = {
 	/* name       mfact  nmaster scale layout       rotate/reflect                x    y */
 	/* example of a HiDPI laptop monitor:
 	{ "eDP-1",    0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
-	{ "HDMI-A-2", 0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	*/
+    { "HDMI-A-2", 0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	/* defaults */
 	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 };
@@ -142,7 +142,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* commands */
 static const char *termcmd[] = {"footclient", NULL};
-static const char *menucmd[] = {"footclient", "-T", "floatterm", "-w", "700x200", "frun", NULL};
+static const char *menucmd[] = {"footclient", "-T", "floatterm-frun", "-w", "700x200", "frun", NULL};
 
 #include "shiftview.c"
 
@@ -171,21 +171,25 @@ static const Key keys[] = {
     { 0,                                -1, XKB_KEY_Print,                regions,        SHCMD("wshot -s") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_f, XKB_KEY_Print,                spawn,          SHCMD("wcast") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_s, XKB_KEY_Print,                regions,        SHCMD("wcast -s") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_c, XKB_KEY_Print,                spawn,          SHCMD("color-picker") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_k,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -k") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_f,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -f") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_b,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open") },
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_h,                    focusto,        {.i = 0}  }, // j (m)
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_t,                    focusto,        {.i = 1}  }, // k
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_n,                    focusto,        {.i = 2}  }, // l
+    /* Left finger for master, right fingers for clients, just like standard tiles layout */
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_a,                    focusto,        {.i = 0}  }, // a (master)
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_h,                    focusto,        {.i = 1}  }, // j
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_t,                    focusto,        {.i = 2}  }, // k
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_n,                    focusto,        {.i = 3}  }, // l
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_s,                    focusto,        {.i = -1} }, // ;
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_g,                    swapstack,      {.i = 0}  }, // u (m)
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_c,                    swapstack,      {.i = 1}  }, // i
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_r,                    swapstack,      {.i = 2}  }, // o
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_semicolon,            swapstack,      {.i = 0}  }, // q (master)
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_g,                    swapstack,      {.i = 1}  }, // u
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_c,                    swapstack,      {.i = 2}  }, // i
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_r,                    swapstack,      {.i = 3}  }, // o
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_l,                    swapstack,      {.i = -1} }, // p
-    { MODKEY,                           -1, XKB_KEY_Down,                 focusstack,     {.i = +1} }, // j
-    { MODKEY,                           -1, XKB_KEY_Up,                   focusstack,     {.i = -1} }, // k
-    { MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Down,                 relativeswap,   {.i = +1} }, // J
-    { MODKEY|WLR_MODIFIER_SHIFT,        -1, XKB_KEY_Up,                   relativeswap,   {.i = -1} }, // K
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_minus,                focusstack,     {.i = -1} }, // : (keeping hands on the home row)
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_backslash,            focusstack,     {.i = +1} }, // ] (keeping hands on the home row)
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_minus,                relativeswap,   {.i = -1} }, // * (keeping hands on the home row)
+    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_underscore,           relativeswap,   {.i = +1} }, // } (keeping hands on the home row)
 	{ MODKEY,                           -1, XKB_KEY_h,                    setmfact,       {.f = -0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_l,                    setmfact,       {.f = +0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_Return,               zoom,           {0} },
