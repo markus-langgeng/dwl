@@ -20,8 +20,8 @@ static const float unfocuseddim[]            = COLOR(0x0000008c);
 static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You can also use glsl colors */
 static uint32_t colors[][3]                = {
 	/*               fg          bg          border    */
-	[SchemeNorm] = { 0xbbbbbbff, 0x222222ff, 0x444444ff },
-	[SchemeSel]  = { 0xeeeeeeff, 0x005577ff, 0x005577ff },
+	[SchemeNorm] = { 0xbbbbbbff, 0x203a2fff, 0x444444ff },
+	[SchemeSel]  = { 0xeeeeeeff, 0x005577ff, 0x99d490ff },
 	[SchemeUrg]  = { 0,          0,          0x770000ff },
 };
 
@@ -43,7 +43,7 @@ static const Rule rules[] = {
     { "mpv",              NULL,                 0,            0,          0,        0,       0,       1,       -1 },
     { "foot",             NULL,                 0,            0,          0,        1,       0,       0,       -1 },
     { NULL,               ".*floatterm.*",      0,            0,          1,        1,       0,       0,       -1 },
-    { NULL,               "Picture-in-Picture", 0,            0,          1,        0,       0,       0,       -1 },
+    { NULL,               "Picture-in-Picture", 0,            0,          1,        0,       0,       1,       -1 },
     { "wev",              NULL,                 0,            0,          1,        0,       1,       0,       -1 },
 };
 
@@ -209,12 +209,12 @@ static const Key keys[] = {
     { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_g,                    movetocardinaldir,  {.ui = DIR_NW} }, // u
 	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_c,                    movetocardinaldir,  {.ui = DIR_N}  }, // i
     { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_r,                    movetocardinaldir,  {.ui = DIR_NE} }, // o
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_n,                    movetocardinaldir,  {.ui = DIR_E}  }, // l
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_v,                    movetocardinaldir,  {.ui = DIR_SE} }, // .
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_w,                    movetocardinaldir,  {.ui = DIR_S}  }, // ,
+    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_m,                    movetocardinaldir,  {.ui = DIR_SW} }, // m
     { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_h,                    movetocardinaldir,  {.ui = DIR_W}  }, // j
     { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_t,                    movetocardinaldir,  {.ui = DIR_C}  }, // k
-	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_n,                    movetocardinaldir,  {.ui = DIR_E}  }, // l
-    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_m,                    movetocardinaldir,  {.ui = DIR_SW} }, // m
-	{ WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_w,                    movetocardinaldir,  {.ui = DIR_S}  }, // ,
-    { WLR_MODIFIER_LOGO,         XKB_KEY_w, XKB_KEY_v,                    movetocardinaldir,  {.ui = DIR_SE} }, // .
 	TAGKEYS(         XKB_KEY_plus,          XKB_KEY_1,               0),
 	TAGKEYS(         XKB_KEY_bracketleft,   XKB_KEY_2,               1),
 	TAGKEYS(         XKB_KEY_braceleft,     XKB_KEY_3,               2),

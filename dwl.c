@@ -3660,62 +3660,62 @@ movetocardinaldir(const Arg *arg)
 {
     Client *c = focustop(selmon);
 	Monitor *m = selmon;
-    struct wlr_box b;
+    unsigned int e = m->gaps, mx, my, mw, mh, h, w;
     int nx, ny;
 
 	if(!(m && arg && arg->v && c && c->isfloating)) {
 		return;
 	}
 
-    b = c->mon->w; // mon->w means respect monitor reserved area
+    mx = c->mon->w.x;
+    my = c->mon->w.y;
+    mw = m->w.width;
+    mh = m->w.height;
+    h = c->geom.height;
+    w = c->geom.width;
 
     switch (arg->ui) {
         case DIR_NW:
-            nx = b.x;
-            ny = topbar == 1 ? b.y : c->mon->m.y;
+            nx = mx + gappx*e;
+            ny = my + gappx*e;
             break;
         case DIR_N:
-            nx = (b.width - c->geom.width) / 2 + b.x;
-            ny = topbar == 1 ? b.y : c->mon->m.y;
+            nx = (mw - w) / 2 + gappx*e;
+            ny = my + gappx*e;
             break;
         case DIR_NE:
-            nx = b.width;
-            ny = topbar == 1 ? b.y : c->mon->m.y;
+            nx = mw - w - gappx*e;
+            ny = my + gappx*e;
             break;
         case DIR_E:
-            nx = b.width;
-            ny = (b.height - c->geom.height) / 2 + b.y;
-            break;
-        case DIR_SW:
-            nx = b.x;
-            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
-            break;
-        case DIR_S:
-            nx = (b.width - c->geom.width) / 2 + b.x;
-            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
+            nx = mx + mw - w - gappx*e;
+            ny = (mh - h) / 2 + my;
             break;
         case DIR_SE:
-            nx = b.width;
-            ny = topbar == 1 ? c->mon->m.height - c->geom.height : b.height - c->geom.height;
+            nx = mw - w - gappx*e;
+            ny = my + mh - h - gappx*e;
+            break;
+        case DIR_S:
+            nx = (mw - w) / 2 + mx;
+            ny = my + mh - h - gappx*e;
+            break;
+        case DIR_SW:
+            nx = mx + gappx*e;
+            ny = my + mh - h - gappx*e;
             break;
         case DIR_W:
-            nx = b.x;
-            ny = (b.height - c->geom.height) / 2 + b.y;
+            nx = mx + gappx*e;
+            ny = (mh - h) / 2 + my;
             break;
         case DIR_C:
-            nx = (b.width - c->geom.width) / 2 + b.x;
-            ny = (b.height - c->geom.height) / 2 + b.y;
+            nx = (mw - w) / 2 + mx;
+            ny = (mh - h) / 2 + my;
             break;
         default:
             return;
     }
 
-	resize(c, (struct wlr_box){
-		.x = nx,
-		.y = ny,
-		.width = c->geom.width,
-		.height = c->geom.height,
-	}, 1);
+	resize(c, (struct wlr_box){ .x = nx, .y = ny, .width = c->geom.width, .height = c->geom.height}, 1);
 }
 
 void
