@@ -11,7 +11,7 @@ static const int smartgaps                 = 0;  /* 1 means no outer gap when th
 static int gaps                            = 1;  /* 1 means gaps between windows are added */
 static const unsigned int gappx            = 10; /* gap pixel between windows */
 static const unsigned int borderpx         = 0;  /* border pixel of windows */
-static const int showbar                   = 1; /* 0 means no bar */
+static const int showbar                   = 0; /* 0 means no bar */
 static const int topbar                    = 1; /* 0 means bottom bar */
 static const char *fonts[]                 = {"monospace:size=10"};
 static const float rootcolor[]             = COLOR(0x000000ff);
@@ -33,18 +33,18 @@ static int log_level = WLR_ERROR;
 
 /* NOTE: ALWAYS keep a rule declared even if you don't use rules (e.g leave at least one example) */
 static const Rule rules[] = {
-	/* app_id     title                       tags mask    switchtotag  isfloating  isterm  noswallow neverdim  monitor */
+	/* app_id     title                       tags mask    isfloating  isterm  noswallow neverdim  monitor */
 	/* examples: */
-	{ "librewolf",        NULL,                 1 << 1,       1,          0,        0,       0,       0,       -1 },
-	{ "org.pwmt.zathura", NULL,                 1 << 2,       1,          0,        0,       0,       0,       -1 },
-	{ "libreoffice-.*",   NULL,                 1 << 3,       1,          0,        0,       0,       0,       -1 },
-	{ "org.kde.kdenlive", NULL,                 1 << 4,       1,          0,        0,       0,       0,       -1 },
-    { NULL,     "Wayland Output Mirror.*",      0,            0,          0,        0,       0,       1,       -1 },
-    { "mpv",              NULL,                 0,            0,          0,        0,       0,       1,       -1 },
-    { "foot",             NULL,                 0,            0,          0,        1,       0,       0,       -1 },
-    { NULL,               ".*floatterm.*",      0,            0,          1,        1,       0,       0,       -1 },
-    { NULL,               "Picture-in-Picture", 0,            0,          1,        0,       0,       1,       -1 },
-    { "wev",              NULL,                 0,            0,          1,        0,       1,       0,       -1 },
+	{ "librewolf",        NULL,                 1 << 1,      0,        0,       0,       0,       -1 },
+	{ "org.pwmt.zathura", NULL,                 1 << 2,      0,        0,       0,       0,       -1 },
+	{ "libreoffice-.*",   NULL,                 1 << 3,      0,        0,       0,       0,       -1 },
+	{ "org.kde.kdenlive", NULL,                 1 << 4,      0,        0,       0,       0,       -1 },
+    { NULL,     "Wayland Output Mirror.*",      0,           0,        0,       0,       1,       -1 },
+    { "mpv",              NULL,                 0,           0,        0,       0,       1,       -1 },
+    { "foot",             NULL,                 0,           0,        1,       0,       0,       -1 },
+    { NULL,               ".*floatterm.*",      0,           1,        1,       0,       0,       -1 },
+    { NULL,               "Picture-in-Picture", 0,           1,        0,       0,       1,       -1 },
+    { "wev",              NULL,                 0,           1,        0,       1,       0,       -1 },
 };
 
 /* layout(s) */
@@ -69,7 +69,7 @@ static const MonitorRule monrules[] = {
 	*/
     { "HDMI-A-2", 0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	/* defaults */
-	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ NULL,       0.5f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 };
 
 /* keyboard */
@@ -188,8 +188,8 @@ static const Key keys[] = {
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_l,                    swapstack,      {.i = -1} }, // p
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_minus,                focusstack,     {.i = -1} }, // : (keeping hands on the home row)
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_backslash,            focusstack,     {.i = +1} }, // ] (keeping hands on the home row)
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_minus,                relativeswap,   {.i = -1} }, // * (keeping hands on the home row)
-    { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_underscore,           relativeswap,   {.i = +1} }, // } (keeping hands on the home row)
+    { MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,-1, XKB_KEY_underscore, relativeswap,   {.i = -1} }, // * (keeping hands on the home row)
+    { MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,-1, XKB_KEY_numbersign, relativeswap,   {.i = +1} }, // } (keeping hands on the home row)
 	{ MODKEY,                           -1, XKB_KEY_h,                    setmfact,       {.f = -0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_l,                    setmfact,       {.f = +0.05f} },
 	{ MODKEY,                           -1, XKB_KEY_Return,               zoom,           {0} },

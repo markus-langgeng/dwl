@@ -96,7 +96,7 @@ enum { CurNormal, CurPressed, CurMove, CurResize }; /* cursor */
 enum { XDGShell, LayerShell, X11 }; /* client types */
 enum { LyrBg, LyrBottom, LyrTile, LyrFloat, LyrTop, LyrFS, LyrOverlay, LyrBlock, NUM_LAYERS }; /* scene layers */
 enum { ClkTagBar, ClkLtSymbol, ClkStatus, ClkTitle, ClkClient, ClkRoot }; /* clicks */
-enum { DIR_test, DIR_N, DIR_S, DIR_W, DIR_E, DIR_C, DIR_NW, DIR_NE, DIR_SW, DIR_SE}; /* 8 cardinal directions + center*/
+enum { DIR_N = 1, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW, DIR_C }; /* 8 cardinal directions + center*/
 #ifdef XWAYLAND
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
 	NetWMWindowTypeUtility, NetLast }; /* EWMH atoms */
@@ -161,7 +161,7 @@ struct Client {
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen, isterm, noswallow, neverdim, switchtotag, issticky;
+	int isfloating, isurgent, isfullscreen, isterm, noswallow, neverdim, issticky;
 	uint32_t resize; /* configure serial of a pending resize */
 	pid_t pid;
 	Client *swallowing, *swallowedby;
@@ -274,7 +274,6 @@ typedef struct {
 	const char *id;
 	const char *title;
 	uint32_t tags;
-	bool switchtotag;
 	int isfloating;
 	int isterm;
 	int noswallow;
@@ -293,7 +292,7 @@ typedef struct {
 
 /* function declarations */
 static void applybounds(Client *c, struct wlr_box *bbox);
-static void applyrules(Client *c, bool map);
+static void applyrules(Client *c);
 static void arrange(Monitor *m);
 static void arrangelayer(Monitor *m, struct wl_list *list,
 		struct wlr_box *usable_area, int exclusive);
@@ -379,6 +378,7 @@ static void motionnotify(uint32_t time, struct wlr_input_device *device, double 
 		double sy, double sx_unaccel, double sy_unaccel);
 static void motionrelative(struct wl_listener *listener, void *data);
 static void moveresize(const Arg *arg);
+static void movetocardinaldir(const Arg *arg);
 static void outputmgrapply(struct wl_listener *listener, void *data);
 static void outputmgrapplyortest(struct wlr_output_configuration_v1 *config, int test);
 static void outputmgrtest(struct wl_listener *listener, void *data);
@@ -419,7 +419,6 @@ static void tablettoolbutton(struct wl_listener *listener, void *data);
 static void tablettooltip(struct wl_listener *listener, void *data);
 static void tile(Monitor *m);
 static void togglebar(const Arg *arg);
-static void movetocardinaldir(const Arg *arg);
 static void toggledimming(const Arg *arg);
 static void toggledimmingclient(const Arg *arg);
 static void togglefloating(const Arg *arg);
@@ -580,7 +579,7 @@ applybounds(Client *c, struct wlr_box *bbox)
 }
 
 void
-applyrules(Client *c, bool map)
+applyrules(Client *c)
 {
 	/* rule matching */
 	const char *appid, *title;
@@ -608,17 +607,12 @@ applyrules(Client *c, bool map)
 			c->isfloating = r->isfloating;
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
-			c->neverdim = r-> neverdim;
+			c->neverdim = r->neverdim;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link) {
 				if (r->monitor == i++)
 					mon = m;
-			}
-			if (r->switchtotag && map) {
-				c->switchtotag = selmon->tagset[selmon->seltags];
-				mon->seltags ^= 1;
-				mon->tagset[selmon->seltags] = r->tags & TAGMASK;
 			}
 		}
 	}
@@ -1198,7 +1192,7 @@ commitnotify(struct wl_listener *listener, void *data)
 		 * a different monitor based on its title this will likely select
 		 * a wrong monitor.
 		 */
-		applyrules(c, false);
+		applyrules(c);
 		if (c->mon) {
 			wlr_surface_set_preferred_buffer_scale(client_surface(c), (int)ceilf(c->mon->wlr_output->scale));
 			wlr_fractional_scale_v1_notify_scale(client_surface(c), c->mon->wlr_output->scale);
@@ -2417,7 +2411,7 @@ mapnotify(struct wl_listener *listener, void *data)
 		}
 		setmon(c, p->mon, p->tags);
 	} else {
-		applyrules(c, true);
+		applyrules(c);
 		d = focustop(selmon);
 		if (d) {
 			client_set_dimmer_state(d, 0);
@@ -3859,14 +3853,6 @@ unmapnotify(struct wl_listener *listener, void *data)
 	if (c->foreign_toplevel) {
 		wlr_foreign_toplevel_handle_v1_destroy(c->foreign_toplevel);
 		c->foreign_toplevel = NULL;
-	}
-
-	if (c->switchtotag) {
-		Arg a = { .ui = c->switchtotag };
-		// Call view() -> arrange() -> checkidleinhibitor() before
-		// wlr_scene_node_destroy() to prevent a rare use after free of
-		// tree->node.
-		view(&a);
 	}
 
 	wlr_scene_node_destroy(&c->scene->node);
