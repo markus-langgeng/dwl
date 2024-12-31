@@ -1891,7 +1891,10 @@ drawbar(Monitor *m)
 	if ((w = m->b.width - tw - x) > m->b.height) {
 		if (c) {
 			drwl_setscheme(m->drw, colors[m == selmon ? SchemeSel : SchemeNorm]);
-			drwl_text(m->drw, x, 0, w, m->b.height, m->lrpad / 2, client_get_title(c), 0);
+            if ((int)TEXTW(m, client_get_title(c)) > w)
+                drwl_text(m->drw, x, 0, w, m->b.height, m->lrpad / 2, client_get_title(c), 0);
+            else
+                drwl_text(m->drw, x, 0, w, m->b.height, (w - TEXTW(m, client_get_title(c))) / 2, client_get_title(c), 0);
 			if (c && c->isfloating)
 				drwl_rect(m->drw, x + boxs, boxs, boxw, boxw, 0, 0);
 		} else {
