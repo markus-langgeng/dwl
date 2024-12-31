@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
@@ -1393,9 +1394,9 @@ createmon(struct wl_listener *listener, void *data)
 			m->m.y = r->y;
 			m->mfact = r->mfact;
 			m->nmaster = r->nmaster;
-			m->lt[0] = r->lt;
-			m->lt[1] = &layouts[LENGTH(layouts) > 1 && r->lt != &layouts[1]];
-			strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol));
+			/* m->lt[0] = r->lt; */
+			/* m->lt[1] = &layouts[LENGTH(layouts) > 1 && r->lt != &layouts[1]]; */
+			/* strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol)); */
 			wlr_output_state_set_scale(&state, r->scale);
 			wlr_output_state_set_transform(&state, r->rr);
 			break;
@@ -1434,10 +1435,18 @@ createmon(struct wl_listener *listener, void *data)
 		m->pertag->nmasters[i] = m->nmaster;
 		m->pertag->mfacts[i] = m->mfact;
 
-		m->pertag->ltidxs[i][0] = m->lt[0];
+		/* m->pertag->ltidxs[i][0] = m->lt[0]; */
+        if (i >= 1)
+            m->pertag->ltidxs[i][0] = &layouts[taglayout[i-1]];
+        else
+            m->pertag->ltidxs[i][0] = &layouts[0];
 		m->pertag->ltidxs[i][1] = m->lt[1];
 		m->pertag->sellts[i] = m->sellt;
 	}
+
+    m->lt[0] = m->pertag->ltidxs[1][0];
+    m->lt[1] = &layouts[1 % LENGTH(layouts)];
+    strncpy(m->ltsymbol, m->pertag->ltidxs[1][0]->symbol, sizeof(m->ltsymbol));
 
 	/* The xdg-protocol specifies:
 	 *
