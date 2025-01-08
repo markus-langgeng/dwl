@@ -11,7 +11,7 @@ static const int smartgaps                 = 0;  /* 1 means no outer gap when th
 static int gaps                            = 1;  /* 1 means gaps between windows are added */
 static const unsigned int gappx            = 10; /* gap pixel between windows */
 static const unsigned int borderpx         = 0;  /* border pixel of windows */
-static const int showbar                   = 0; /* 0 means no bar */
+static const int showbar                   = 1; /* 0 means no bar */
 static const int topbar                    = 1; /* 0 means bottom bar */
 static const char *fonts[]                 = {"monospace:size=10"};
 static const float rootcolor[]             = COLOR(0x000000ff);
@@ -21,7 +21,7 @@ static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You ca
 static uint32_t colors[][3]                = {
 	/*               fg          bg          border    */
 	[SchemeNorm] = { 0xbbbbbbff, 0x203a2fff, 0x444444ff },
-	[SchemeSel]  = { 0xeeeeeeff, 0x4a7d42ff, 0x99d490ff },
+	[SchemeSel]  = { 0xeeeeeeff, 0xd00000ff, 0x99d490ff },
 	[SchemeUrg]  = { 0,          0,          0x770000ff },
 };
 
@@ -155,15 +155,17 @@ static const Key keys[] = {
 	{ MODKEY,                           -1, XKB_KEY_b,                    togglebar,      {0} },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_less,             shiftview,      { .i = -1 } },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, -1, XKB_KEY_greater,          shiftview,      { .i = 1 } },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          SHCMD("mpc prev; songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          SHCMD("mpc next; songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          SHCMD("mpc toggle; songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_s,                    spawn,          SHCMD("mpc single; songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_r,                    spawn,          SHCMD("mpc repeat; songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_z,                    spawn,          SHCMD("mpc random; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_p,                    spawn,          SHCMD("mpc -q prev; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_n,                    spawn,          SHCMD("mpc -q next; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_t,                    spawn,          SHCMD("mpc -q toggle; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_s,                    spawn,          SHCMD("mpc -q single; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_r,                    spawn,          SHCMD("mpc -q repeat; songinfo;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_z,                    spawn,          SHCMD("mpc -q random; songinfo;") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_m,                    spawn,          SHCMD("songinfo;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_plus,                 spawn,          SHCMD("mpc volume +5;") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_minus,                spawn,          SHCMD("mpc volume -5;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_plus,                 spawn,          SHCMD("mpc -q volume +5;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_m, XKB_KEY_minus,                spawn,          SHCMD("mpc -q volume -5;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_v, XKB_KEY_plus,                 spawn,          SHCMD("playerctl -p mpv volume 0.02+;") },
+    { WLR_MODIFIER_LOGO,         XKB_KEY_v, XKB_KEY_minus,                spawn,          SHCMD("playerctl -p mpv volume 0.02-;") },
     { 0,                                -1, XKB_KEY_XF86AudioRaiseVolume, spawn,          SHCMD("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%+;") },
     { 0,                                -1, XKB_KEY_XF86AudioLowerVolume, spawn,          SHCMD("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 2%-;") },
     { 0,                                -1, XKB_KEY_XF86AudioMute,        spawn,          SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle;") },
