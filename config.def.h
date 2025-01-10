@@ -37,7 +37,7 @@ static const Rule rules[] = {
 	/* app_id     title                       tags mask    isfloating  isterm  noswallow neverdim  monitor */
 	/* examples: */
 	{ "librewolf",        NULL,                 1 << 1,      0,        0,       0,       0,       -1 },
-	{ "org.pwmt.zathura", NULL,                 1 << 2,      0,        0,       0,       0,       -1 },
+	{ "Zathura",          NULL,                 1 << 2,      0,        0,       0,       0,       -1 },
 	{ "libreoffice-.*",   NULL,                 1 << 3,      0,        0,       0,       0,       -1 },
 	{ "org.kde.kdenlive", NULL,                 1 << 4,      0,        0,       0,       0,       -1 },
     { NULL,     "Wayland Output Mirror.*",      0,           0,        0,       0,       1,       -1 },
