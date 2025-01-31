@@ -1,5 +1,7 @@
 # My Build of DWL
 
+![Screenshot of my dwl build. There are 2 dwl clients with neovim opened, one on the left and one on the right, both are currently editing slstatus and dwl source code respectively, the left one is dimmed.](./screenshots/2025-01-31_02.png)
+
 # Features and/or Patches
 - bar (with true-centered-title if there's space available)
 - dim unfocused
