@@ -1,5 +1,23 @@
 # My Build of DWL
 
+# Features and/or Patches
+- bar (with true-centered-title if there's space available)
+- dim unfocused
+- gaps, gaps for monocle and deck layout
+- swallow + regex rules
+- move to cardinal direction (my own patch) and sticky (both respect gap)
+- regions
+- tablet-input (still don't know how to set keybindings the button on the pen tablet and the pen itself though ¯\_(ツ)_/¯ )
+- zoomswap
+- chainkeys
+- shiftview
+- alwayscenter
+- pertag (can I include gap into the pertag code? )
+
+Keybindings are in the config.def.h (see it 4 urself, I'm to lazy to document it, hope u understand <3)
+
+Note: Probably there are a few patches that I forgot to mention. In any case details are in the commits
+
 # dwl - dwm for Wayland
 
 Join us on our IRC channel: [#dwl on Libera Chat]
