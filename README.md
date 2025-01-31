@@ -7,7 +7,7 @@
 - swallow + regex rules
 - move to cardinal direction (my own patch) and sticky (both respect gap)
 - regions
-- tablet-input (still don't know how to set keybindings the button on the pen tablet and the pen itself though ¯\_(ツ)_/¯ )
+- tablet-input (still don't know how to set keybindings the button on the pen tablet and the pen itself though ¯\\_(ツ)_/¯ )
 - zoomswap
 - chainkeys
 - shiftview
