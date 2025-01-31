@@ -37,7 +37,7 @@ static const Rule rules[] = {
 	/* app_id     title                       tags mask    isfloating  isterm  noswallow neverdim  monitor */
 	/* examples: */
 	{ "librewolf",        NULL,                 1 << 1,      0,        0,       0,       0,       -1 },
-	{ "Zathura",          NULL,                 1 << 2,      0,        0,       0,       0,       -1 },
+	{ "org.pwmt.zathura", NULL,                 1 << 2,      0,        0,       0,       0,       -1 },
 	{ "libreoffice-.*",   NULL,                 1 << 3,      0,        0,       0,       0,       -1 },
 	{ "org.kde.kdenlive", NULL,                 1 << 4,      0,        0,       0,       0,       -1 },
     { NULL,     "Wayland Output Mirror.*",      0,           0,        0,       0,       1,       -1 },
@@ -65,18 +65,17 @@ static const Layout layouts[] = {
 /* NOTE: ALWAYS add a fallback rule, even if you are completely sure it won't be used */
 static const MonitorRule monrules[] = {
 	/* name       mfact  nmaster scale layout       rotate/reflect                x    y */
-	/* example of a HiDPI laptop monitor:
-	{ "eDP-1",    0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
-	*/
-    { "HDMI-A-2", 0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ "eDP-1",    0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  -1,  -1 },
+    { "HDMI-A-2", 0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,  -1,  -1 },
 	/* defaults */
-	{ NULL,       0.5f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ NULL,       0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 };
 
 /* keyboard */
 static const struct xkb_rule_names xkb_rules = {
 	/* can specify fields: rules, model, layout, variant, options */
-    .layout = "real-prog-dvorak",
+    .layout = "us",
+    .variant = "rpd",
 	/* example:
 	.options = "ctrl:nocaps",
 	*/
@@ -129,6 +128,8 @@ LIBINPUT_CONFIG_TAP_MAP_LMR -- 1/2/3 finger tap maps to left/middle/right
 */
 static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TAP_MAP_LRM;
 
+static const int cursor_timeout = 5;
+
 /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_ALT
 
@@ -175,9 +176,7 @@ static const Key keys[] = {
     { WLR_MODIFIER_LOGO,         XKB_KEY_f, XKB_KEY_Print,                spawn,          SHCMD("wcast") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_s, XKB_KEY_Print,                regions,        SHCMD("wcast -s") },
     { WLR_MODIFIER_LOGO,         XKB_KEY_c, XKB_KEY_Print,                spawn,          SHCMD("color-picker") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_k,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -k") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_f,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open -f") },
-    { WLR_MODIFIER_LOGO,         XKB_KEY_b, XKB_KEY_b,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open") },
+    { WLR_MODIFIER_LOGO,                -1, XKB_KEY_b,                    spawn,          SHCMD("footclient -T floatterm -w 800x400 bm-open") },
     /* Left finger for master, right fingers for clients, just like standard tiles layout */
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_a,                    focusto,        {.i = 0}  }, // a (master)
     { MODKEY|WLR_MODIFIER_CTRL,         -1, XKB_KEY_h,                    focusto,        {.i = 1}  }, // j

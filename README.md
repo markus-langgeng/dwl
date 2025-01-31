@@ -1,6 +1,8 @@
+# My Build of DWL
+
 # dwl - dwm for Wayland
 
-Join us on our IRC channel: [#dwl on Libera Chat]  
+Join us on our IRC channel: [#dwl on Libera Chat]
 Or on our [Discord server].
 
 dwl is a compact, hackable compositor for [Wayland] based on [wlroots]. It is
@@ -29,7 +31,7 @@ are welcome to use `main`, it is a rocky road. Using `main` requires that the
 user be willing to chase git commits of wlroots. Testing development pull
 requests may involve merging unmerged pull requests in [wlroots]' git repository
 and/or git commits of wayland.
-  
+
 ### Building dwl
 dwl has the following dependencies:
 - libinput
