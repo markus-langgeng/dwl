@@ -14,7 +14,7 @@
 - chainkeys
 - shiftview
 - alwayscenter
-- pertag (can I include gap into the pertag code? )
+- pertag with customizable default layout (can I include gap into the pertag code? )
 
 Keybindings are in the config.def.h (see it 4 urself, I'm to lazy to document it, hope u understand <3)
 
